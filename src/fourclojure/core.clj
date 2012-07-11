@@ -101,3 +101,78 @@
       #{["father" "son"] ["uncle" "cousin"] ["son" "grandson"]}]
   (= (__ progeny)
      #{["father" "son"] ["father" "grandson"] ["uncle" "cousin"] ["son" "grandson"]}))
+
+                                        ; Problem 85 - Power Set
+
+(def __ (fn fx [s]
+          (reduce clojure.set/union #{s} (map #(fx (disj s %)) s))))
+
+(def __ (fn fx [s]
+          (if (empty? s) #{#{}}
+              (clojure.set/union (fx (next s))
+                                 (map #(conj % (first s)) (fx (next s)))))))
+
+(def __ (fn [s]
+          (reduce (fn [s k] (into s (map #(conj % k) s))) #{#{}} s)))
+
+(= (__ #{1 :a}) #{#{1 :a} #{:a} #{} #{1}})
+
+(= (__ #{}) #{#{}})
+
+(= (__ #{1 2 3})
+   #{#{} #{1} #{2} #{3} #{1 2} #{1 3} #{2 3} #{1 2 3}})
+
+(= (count (__ (into #{} (range 10)))) 1024)
+
+                                        ; Problem 86 - Happy Numbers
+
+(def __ (fn [x]
+  (loop [x x xs #{}]
+    (cond (xs x) false
+          (= x 1) true
+          :else (recur
+                 (reduce + (map (comp #(* % %) read-string str) (str x)))
+                             (conj xs x))))))
+
+(= (__ 7) true)
+
+(= (__ 986543210) true)
+
+(= (__ 2) false)
+
+(= (__ 3) false)
+
+                                        ; Problem 87 - Doesn't Exist
+
+                                        ; Problem 88 - Symmetric Difference
+
+(def __ (partial reduce #((if (% %2) disj conj) % %2)))
+
+(= (__ #{1 2 3 4 5 6} #{1 3 5 7}) #{2 4 6 7})
+
+(= (__ #{:a :b :c} #{}) #{:a :b :c})
+
+(= (__ #{} #{4 5 6}) #{4 5 6})
+
+(= (__ #{[1 2] [2 3]} #{[2 3] [3 4]}) #{[1 2] [3 4]})
+
+                                        ; Problem 89 - Graph Tour
+
+                                        ; - You can start at any node.
+                                        ; - You must visit each edge exactly once.
+                                        ; - All edges are undirected.
+
+(= true (__ [[:a :b]]))
+
+(= false (__ [[:a :a] [:b :b]]))
+
+(= false (__ [[:a :b] [:a :b] [:a :c] [:c :a]
+              [:a :d] [:b :d] [:c :d]]))
+
+(= true (__ [[1 2] [2 3] [3 4] [4 1]]))
+
+(= true (__ [[:a :b] [:a :c] [:c :b] [:a :e]
+             [:b :e] [:a :d] [:b :d] [:c :e]
+             [:d :e] [:c :f] [:d :f]]))
+
+(= false (__ [[1 2] [2 3] [2 4] [2 5]]))
